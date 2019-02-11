@@ -19,14 +19,14 @@ default: &default
 
 development:
   <<: *default
-  database: musiclinks_development
+  database: comiroughs_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: musiclinks_test
+  database: comiroughs_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -49,6 +49,6 @@ test:
 #
 production:
   <<: *default
-  database: musiclinks_production
-  username: musiclinks
-  password: <%= ENV['MUSICLINKS_DATABASE_PASSWORD'] %>
+  database: comiroughs_production
+  username: comiroughs
+  password: <%= ENV['comiroughS_DATABASE_PASSWORD'] %>
