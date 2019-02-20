@@ -1,21 +1,20 @@
-<p id="notice"><%= notice %></p>
-
+<p id="notice">
+  <%= notice %>
+</p>
 <%= @rough.content %>
-
 <p>
   <strong>Title:</strong>
   <%= @rough.title %>
 </p>
-
 <p>
   <strong>Tag:</strong>
   <%= @rough.tag %>
 </p>
-
 <p>
   <strong>Category:</strong>
   <%= @rough.category %>
 </p>
-
-<%= link_to 'Edit', edit_rough_path(@rough) %> |
+<%= link_to 'Edit', edit_rough_path(@rough) %>
+|
 <%= link_to 'Back', roughs_path %>
+

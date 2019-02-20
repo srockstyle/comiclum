@@ -69,6 +69,6 @@ class RoughsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def rough_params
-      params.require(:rough).permit(:title, :tag, :category,:content)
+      params.require(:rough).permit(:title, :tag, :category,:content,:rough,:image)
     end
 end
