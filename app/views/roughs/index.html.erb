@@ -1,7 +1,7 @@
-<p id="notice"><%= notice %></p>
-
+<p id="notice">
+  <%= notice %>
+</p>
 <h1>Roughs</h1>
-
 <table>
   <thead>
     <tr>
@@ -11,21 +11,34 @@
       <th colspan="3"></th>
     </tr>
   </thead>
-
   <tbody>
     <% @roughs.each do |rough| %>
       <tr>
-        <td><%= rough.title %></td>
-        <td><%= rough.tag %></td>
-        <td><%= rough.category %></td>
-        <td><%= link_to 'Show', rough %></td>
-        <td><%= link_to 'Edit', edit_rough_path(rough) %></td>
-        <td><%= link_to 'Destroy', rough, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td>
+          <%= rough.title %>
+        </td>
+        <td>
+          <%= rough.tag %>
+        </td>
+        <td>
+          <%= rough.category %>
+        </td>
+        <td>
+          <%= image_tag url_for(rough.rough) %>
+        </td>
+        <td>
+          <%= link_to 'Show', rough %>
+        </td>
+        <td>
+          <%= link_to 'Edit', edit_rough_path(rough) %>
+        </td>
+        <td>
+          <%= link_to 'Destroy', rough, method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<br>
-
+<br/>
 <%= link_to 'New Rough', new_rough_path %>
+
