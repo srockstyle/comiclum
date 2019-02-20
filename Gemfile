@@ -10,7 +10,7 @@ gem 'sass-rails', '~> 5.0'
 gem 'webpacker', '>= 4.0.0.rc.3'
 gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
-
+gem 'haml-rails'
 ## action text使うのに必要
 gem 'mini_magick'
 gem 'image_processing', '~> 1.2'
