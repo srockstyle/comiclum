@@ -4,7 +4,7 @@ class RoughsController < ApplicationController
   # GET /roughs
   # GET /roughs.json
   def index
-    @roughs = Rough.all
+    @roughs = Rough.with_attached_rough.all
   end
 
   # GET /roughs/1
