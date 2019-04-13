@@ -1,0 +1,172 @@
+- name: provisioning
+  hosts: all
+  become: yes
+  gather_facts: False
+  max_fail_percentage: 0
+  vars:
+    app_path: /vagrant
+    home: /home/vagrant
+    ruby_version: 2.6.2
+    ruby_path: "{{ home }}/local/ruby-2.6.2"
+    xbuild_path: "{{ home }}/xbuild"
+  tasks:
+    - name: set timezone to Asia/Tokyo
+      timezone:
+        name: Asia/Tokyo
+    - name: add epel
+      yum:
+        name: epel-release
+        state: latest
+    - name: add mysql repo
+      yum:
+        name: http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+        state: present
+    - name: yum update
+      yum:
+        disablerepo: mysql57-community
+        name: "*"
+        state: latest
+    - name: core package install
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - git
+        - expect
+        - gcc
+        - tree
+        - gcc-c++
+        - vim-common
+        - vim-enhanced
+        - wget
+        - curl
+        - curl-devel
+        - bison
+        - openssl
+        - openssl-devel
+        - pcre-devel
+        - zlib-devel
+        - epel-release
+        - libcurl-devel
+        - readline-devel
+        - yum-utils
+        - zlib
+        - fontconfig
+        - freetype
+        - libX11
+        - libXext
+        - libXrender
+        - libpng
+        - libpng-devel
+        - libjpeg
+        - libjpeg-devel
+        - bind-utils
+        - nkf
+        - unzip
+        - chrony
+        - zip
+        - bzip2
+        - automake
+        - autoconf
+        - libyaml-devel
+        - libffi-devel
+        - make
+        - patch
+        - libtool
+        - sqlite-devel
+    - name: mysql
+      yum:
+        name: http://repo.mysql.com/yum/mysql-8.0-community/el/7/i386//mysql80-community-release-el7-1.noarch.rpm
+        state: present
+    - name: mysql57-disable
+      shell: "yum-config-manager --disable mysql57-community"
+    - name: mysql80-disable
+      shell: "yum-config-manager --disable mysql80-community"
+    - name: mysql56-enable
+      shell: "yum-config-manager --enable mysql56-community"
+    - name: mysqld install
+      yum:
+        name:
+          - mysql-community-server
+          - mysql-community-client
+          - mysql-community-common
+          - mysql-community-devel
+          - mysql-community-libs
+        state: present
+    - name: mysqld start
+      service:
+        name: mysqld
+        state: started
+    - name: xbuild path
+      file:
+        path: "{{ home }}/{{ item }}"
+        state: directory
+        mode: 0755
+        owner: vagrant
+        group: vagrant
+      with_items:
+        - xbuild
+        - local
+    - name: git clone
+      git:
+        repo: "https://github.com/tagomoris/xbuild.git"
+        dest: "{{ xbuild_path }}"
+    - name: install ruby  xbuild
+      command: "{{ xbuild_path }}/ruby-install {{ ruby_version }} {{ ruby_path }}"
+      become: yes
+      become_user: vagrant
+    - name: add path
+      lineinfile:
+        path: "{{ home }}/.bash_profile"
+        line: "export PATH={{ ruby_path }}/bin:$PATH"
+        owner: vagrant
+        group: vagrant
+    - name: ~/.local/bin ディレクトリ作成
+      file:
+        path: "{{ home }}/.local/bin"
+        owner: vagrant
+        group: vagrant
+        mode: 0755
+        state: directory
+        recurse: true
+    - name: bundler が初回に失敗するのでパスを通す
+      file:
+        src: "{{ ruby_path }}/bin/bundle"
+        dest: "{{ home }}/.local/bin/bundle"
+        owner: vagrant
+        group: vagrant
+        state: link
+    - name: bundler
+      shell: "{{ ruby_path }}/bin/bundle"
+      become: yes
+      become_user: vagrant
+      args:
+        chdir: app_path
+    - name: cp application settings
+      copy:
+        src: "{{ app_path }}/config/{{ item }}.yml.local"
+        dest: "{{ app_path }}/config/{{ item }}.yml"
+        force: no
+        owner: vagrant
+        group: vagrant
+      with_items:
+        - application
+        - database
+    - name: Migrate DB
+      shell: "{{ ruby_path }}/bin/rake db:create"
+      become: yes
+      become_user: vagrant
+      args:
+        chdir: app_path
+    - name: Migrate DB
+      command: "{{ ruby_path }}/bin/rake db:migrate"
+      become: yes
+      become_user: vagrant
+      args:
+        chdir: app_path
+    - name: seed data
+      command: "{{ ruby_path }}/bin/rake db:seed"
+      become: yes
+      become_user: vagrant
+      args:
+        chdir: app_path
