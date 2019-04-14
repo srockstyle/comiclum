@@ -17,13 +17,8 @@
       yum:
         name: epel-release
         state: latest
-    - name: add mysql repo
-      yum:
-        name: http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
-        state: present
     - name: yum update
       yum:
-        disablerepo: mysql57-community
         name: "*"
         state: latest
     - name: core package install
